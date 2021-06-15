@@ -2,6 +2,7 @@ package at.ac.fhcampuswien.newsapi;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import at.ac.fhcampuswien.newsapi.beans.NewsResponse;
 import at.ac.fhcampuswien.newsapi.enums.*;
@@ -134,9 +135,11 @@ public class NewsApi {
                 response.append(inputLine);
             }
             in.close();
+        }catch (NullPointerException e){
+            System.out.println("Error: failed by connection opening");
         } catch (IOException e) {
             // TODO improve ErrorHandling
-            System.out.println("Error "+e.getMessage());
+            System.out.println("Error I/O failed because of the stream "+e.getMessage());
         }
         return response.toString();
     }
@@ -195,11 +198,15 @@ public class NewsApi {
                 if(!"ok".equals(newsReponse.getStatus())){
                     System.out.println("Error: "+newsReponse.getStatus());
                 }
-            } catch (JsonProcessingException e) {
-                System.out.println("Error: "+e.getMessage());
+
+        //TODO improve Errorhandling
+            } catch (JsonMappingException e) {
+                System.out.println("Error: JSON Mapping did not work");
+                e.printStackTrace();
+            } catch (JsonProcessingException e){
+                System.out.println("Error: JSON Processing did not work" + e.getMessage());
             }
         }
-        //TODO improve Errorhandling
         return newsReponse;
     }
 }
